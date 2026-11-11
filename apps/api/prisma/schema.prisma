@@ -1,0 +1,286 @@
+// ISPTEC Marketplace — apps/api/prisma/schema.prisma
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ───────────── Enums ─────────────
+enum Role {
+  COMPRADOR
+  VENDEDOR
+  ADMIN
+}
+
+enum CategoriaProduto {
+  ALIMENTACAO
+  MATERIAL_ESCOLAR
+  ALUGUER
+}
+
+enum TipoProduto {
+  VENDA
+  ALUGUER
+}
+
+// Estado manual do anúncio (controlado pelo vendedor/admin)
+enum EstadoAnuncio {
+  PENDENTE // criado, ainda sem 1.ª mensalidade
+  PUBLICADO
+  PAUSADO
+  ELIMINADO
+}
+
+// Estado da mensalidade (mantido pelo cron + validação de pagamentos)
+enum EstadoMensalidade {
+  PENDENTE
+  ATIVO
+  EXPIRADO
+}
+
+enum MetodoPagamento {
+  REFERENCIA_MULTICAIXA
+  MULTICAIXA_EXPRESS
+}
+
+enum EstadoPagamento {
+  PENDENTE
+  APROVADO
+  REJEITADO
+}
+
+enum EstadoAluguer {
+  SOLICITADO
+  EM_CURSO
+  DEVOLVIDO
+  ATRASADO
+  CANCELADO
+}
+
+enum TipoNotificacao {
+  OTP
+  MENSALIDADE_3_DIAS
+  MENSALIDADE_EXPIRADA
+}
+
+enum EstadoDenuncia {
+  ABERTA
+  RESOLVIDA
+  REJEITADA
+}
+
+// ───────────── Dados institucionais (geridos pelo Admin) ─────────────
+model Curso {
+  id     String  @id @default(cuid())
+  nome   String  @unique
+  ativo  Boolean @default(true)
+  users  User[]
+}
+
+model Bloco {
+  id    String  @id @default(cuid())
+  nome  String  @unique // "Bloco A"
+  ativo Boolean @default(true)
+  salas Sala[]
+  users User[]
+}
+
+model Sala {
+  id      String    @id @default(cuid())
+  nome    String // "Sala 12", "Esplanada", "Cantina"
+  blocoId String
+  bloco   Bloco     @relation(fields: [blocoId], references: [id])
+  ativo   Boolean   @default(true)
+  users   User[]
+  produtos Produto[]
+
+  @@unique([blocoId, nome])
+}
+
+// ───────────── Utilizadores ─────────────
+model User {
+  id             String   @id @default(cuid())
+  nomeCompleto   String
+  matricula      String   @unique // substitui o BI
+  telefone       String   @unique // formato 2449XXXXXXXX
+  passwordHash   String
+  role           Role     @default(COMPRADOR)
+  telefoneVerificado Boolean @default(false)
+  ativo          Boolean  @default(true)
+  anoAcademico   Int // 1, 2, 3...
+  cursoId        String
+  blocoId        String
+  salaId         String
+  curso          Curso    @relation(fields: [cursoId], references: [id])
+  bloco          Bloco    @relation(fields: [blocoId], references: [id])
+  sala           Sala     @relation(fields: [salaId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  produtos           Produto[]
+  otps               OtpCode[]
+  pagamentos         Pagamento[]  @relation("PagamentoVendedor")
+  pagamentosValidados Pagamento[] @relation("PagamentoValidador")
+  alugueresComoLocatario Aluguer[] @relation("Locatario")
+  avaliacoesFeitas   Avaliacao[]  @relation("Autor")
+  avaliacoesRecebidas Avaliacao[] @relation("Alvo")
+  denuncias          Denuncia[]
+}
+
+// Verificação de número via WhatsApp (guardar HASH do código, nunca em claro)
+model OtpCode {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codigoHash String
+  expiraEm  DateTime
+  tentativas Int      @default(0)
+  usadoEm   DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+// ───────────── Produtos & mensalidade (por produto) ─────────────
+model Produto {
+  id          String            @id @default(cuid())
+  vendedorId  String
+  vendedor    User              @relation(fields: [vendedorId], references: [id])
+  titulo      String
+  descricao   String
+  categoria   CategoriaProduto
+  tipo        TipoProduto
+  preco       Decimal           @db.Decimal(12, 2)
+  imagemUrl   String // validada < 1MB no upload
+  salaId      String?
+  sala        Sala?             @relation(fields: [salaId], references: [id])
+
+  estadoAnuncio      EstadoAnuncio     @default(PENDENTE)
+  estadoMensalidade  EstadoMensalidade @default(PENDENTE)
+  mensalidadeExpiraEm DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pagamentos Pagamento[]
+  alugueres  Aluguer[]
+  avaliacoes Avaliacao[]
+  destaque   Destaque?
+  denuncias  Denuncia[]
+  notificacoes NotificacaoLog[]
+
+  // Filtro da vitrine/pesquisa: PUBLICADO + ATIVO + (expiraEm > now)
+  @@index([estadoAnuncio, estadoMensalidade, mensalidadeExpiraEm])
+  @@index([vendedorId])
+}
+
+model Pagamento {
+  id            String          @id @default(cuid())
+  produtoId     String
+  produto       Produto         @relation(fields: [produtoId], references: [id])
+  vendedorId    String
+  vendedor      User            @relation("PagamentoVendedor", fields: [vendedorId], references: [id])
+  valor         Decimal         @db.Decimal(12, 2) // snapshot do valor vigente
+  metodo        MetodoPagamento
+  referenciaTransacao String? // dados da transferência inseridos pelo vendedor
+  comprovativoUrl String?
+  estado        EstadoPagamento @default(PENDENTE)
+  motivoRejeicao String?
+  validadoPorId String?
+  validadoPor   User?           @relation("PagamentoValidador", fields: [validadoPorId], references: [id])
+  validadoEm    DateTime?
+  createdAt     DateTime        @default(now())
+
+  @@index([estado])
+  @@index([produtoId])
+}
+
+// Carrossel de destaque (só produtos com mensalidade ativa)
+model Destaque {
+  id        String   @id @default(cuid())
+  produtoId String   @unique
+  produto   Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  ordem     Int      @default(0)
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+// ───────────── Alugueres & avaliações ─────────────
+model Aluguer {
+  id             String        @id @default(cuid())
+  produtoId      String
+  produto        Produto       @relation(fields: [produtoId], references: [id])
+  locatarioId    String
+  locatario      User          @relation("Locatario", fields: [locatarioId], references: [id])
+  estado         EstadoAluguer @default(SOLICITADO)
+  dataInicio     DateTime?
+  dataPrevistaDevolucao DateTime?
+  dataDevolucao  DateTime?
+  createdAt      DateTime      @default(now())
+
+  avaliacoes Avaliacao[]
+
+  @@index([locatarioId])
+  @@index([estado, dataPrevistaDevolucao])
+}
+
+model Avaliacao {
+  id         String   @id @default(cuid())
+  autorId    String
+  autor      User     @relation("Autor", fields: [autorId], references: [id])
+  // Avalia um utilizador (vendedor→locatário, pontualidade/estado do material)
+  // ou um produto (comprador→produto). Pelo menos um dos alvos é preenchido.
+  alvoUserId String?
+  alvoUser   User?    @relation("Alvo", fields: [alvoUserId], references: [id])
+  produtoId  String?
+  produto    Produto? @relation(fields: [produtoId], references: [id])
+  aluguerId  String?
+  aluguer    Aluguer? @relation(fields: [aluguerId], references: [id])
+  estrelas   Int // 1..5 (validar na API)
+  comentario String?
+  removida   Boolean  @default(false) // moderação
+  createdAt  DateTime @default(now())
+
+  @@index([alvoUserId])
+  @@index([produtoId])
+}
+
+model Denuncia {
+  id         String         @id @default(cuid())
+  produtoId  String
+  produto    Produto        @relation(fields: [produtoId], references: [id])
+  autorId    String
+  autor      User           @relation(fields: [autorId], references: [id])
+  motivo     String
+  estado     EstadoDenuncia @default(ABERTA)
+  createdAt  DateTime       @default(now())
+}
+
+// ───────────── Configuração financeira (linha única) ─────────────
+model Configuracao {
+  id                String  @id @default("singleton")
+  valorMensalidade  Decimal @db.Decimal(12, 2)
+  duracaoDias       Int     @default(30)
+  entidade          String?
+  referenciaBase    String?
+  numeroExpress     String?
+  diasAvisoPrevio   Int     @default(3)
+}
+
+// Idempotência do cron: evita enviar o mesmo lembrete duas vezes
+model NotificacaoLog {
+  id        String          @id @default(cuid())
+  produtoId String
+  produto   Produto         @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  tipo      TipoNotificacao
+  dataAlvo  DateTime        @db.Date // dia de expiração a que o aviso se refere
+  enviadaEm DateTime        @default(now())
+  sucesso   Boolean         @default(true)
+
+  @@unique([produtoId, tipo, dataAlvo])
+}
