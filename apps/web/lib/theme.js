@@ -14,17 +14,16 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem('unishop_theme');
-      if (saved === 'dark' || saved === 'light') {
-        setThemeState(saved);
-        applyTheme(saved);
+      // Modo Light como padrão: só aplica dark se explicitamente salvo como 'dark'
+      if (saved === 'dark') {
+        setThemeState('dark');
+        applyTheme('dark');
       } else {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initial = prefersDark ? 'dark' : 'light';
-        setThemeState(initial);
-        applyTheme(initial);
+        setThemeState('light');
+        applyTheme('light');
       }
     } catch {
-      // fallback
+      applyTheme('light');
     }
     setMounted(true);
   }, []);
@@ -61,4 +60,3 @@ export function ThemeProvider({ children }) {
 export function useTheme() {
   return useContext(ThemeContext);
 }
-

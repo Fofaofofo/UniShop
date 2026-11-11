@@ -1,13 +1,12 @@
 'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
-import Link from 'next/link';
+import { useState, useEffect, useCallback } from 'react';
 import Logo from '@/components/Logo';
 
 const SLIDES = [
   {
     id: 1,
     tag: 'Boas-Vindas & Identidade',
-    tagIcon: '🎓',
+    tagIconType: 'academic',
     title: 'Bem-vindo ao UniShop ISPTEC',
     subtitle:
       'O marketplace oficial da nossa comunidade acadêmica. Compre, venda e alugue com segurança dentro do campus.',
@@ -17,7 +16,7 @@ const SLIDES = [
   {
     id: 2,
     tag: 'Aluguer Seguro com Rastreabilidade',
-    tagIcon: '🔬',
+    tagIconType: 'shield',
     title: 'Alugue Materiais com Total Confiança',
     subtitle:
       'Calculadoras científicas, jalecos e livros. Sistema seguro com identificação por número de matrícula e avaliação de reputação entre colegas.',
@@ -27,7 +26,7 @@ const SLIDES = [
   {
     id: 3,
     tag: 'Praticidade & WhatsApp Direto',
-    tagIcon: '⚡',
+    tagIconType: 'chat',
     title: 'Negociação Rápida e Direta',
     subtitle:
       'Encontre lanches, material escolar e serviços no seu bloco e sala. Feche negócios num clique direto pelo WhatsApp do fornecedor!',
@@ -36,13 +35,35 @@ const SLIDES = [
   },
 ];
 
+const SlideIcon = ({ type }) => {
+  if (type === 'academic') {
+    return (
+      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+      </svg>
+    );
+  }
+  if (type === 'shield') {
+    return (
+      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+  );
+};
+
 export default function LandingOnboarding({ onFinish, isStandalone = false }) {
   const [current, setCurrent] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Manipulador de conclusão do onboarding
   const handleFinish = useCallback(() => {
     try {
       localStorage.setItem('unishop_onboarding_completed', 'true');
@@ -54,12 +75,15 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
     }
   }, [onFinish]);
 
-  const goToSlide = useCallback((index) => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setCurrent(index);
-    setTimeout(() => setIsAnimating(false), 450);
-  }, [isAnimating]);
+  const goToSlide = useCallback(
+    (index) => {
+      if (isAnimating) return;
+      setIsAnimating(true);
+      setCurrent(index);
+      setTimeout(() => setIsAnimating(false), 450);
+    },
+    [isAnimating]
+  );
 
   const nextSlide = useCallback(() => {
     if (current < SLIDES.length - 1) {
@@ -75,7 +99,6 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
     }
   }, [current, goToSlide]);
 
-  // Navegação por teclado
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowRight' || e.key === 'Space') {
@@ -90,7 +113,6 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [nextSlide, prevSlide, handleFinish]);
 
-  // Gestos de Touch / Swipe
   const handleTouchStart = (e) => {
     setTouchStart(e.targetTouches[0].clientX);
     setTouchEnd(e.targetTouches[0].clientX);
@@ -125,7 +147,7 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Background Slides com transição suave */}
+      {/* Background Slides */}
       {SLIDES.map((s, index) => {
         const isActive = index === current;
         return (
@@ -138,12 +160,8 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
             style={{ transitionProperty: 'opacity, transform' }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={s.image}
-              alt={s.title}
-              className="h-full w-full object-cover object-center"
-            />
-            {/* Overlay em camadas: Preto Profundo #000000 e Amarelo Ouro #F59E0B */}
+            <img src={s.image} alt={s.title} className="h-full w-full object-cover object-center" />
+            {/* Overlays elegantes */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/75 to-black/35" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/60" />
             <div className="absolute inset-0 bg-radial-gradient from-amber-500/10 via-transparent to-black/70 mix-blend-screen" />
@@ -151,10 +169,10 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
         );
       })}
 
-      {/* Top Bar: Logotipo UniShop + Botão Saltar */}
+      {/* Top Bar: Logotipo UniShop sem emojis e com variante branca para fundo escuro */}
       <header className="relative z-20 flex items-center justify-between px-6 pt-6 sm:px-12 sm:pt-8">
         <div className="flex items-center gap-2">
-          <Logo size="md" link={false} className="drop-shadow-md" />
+          <Logo size="md" variant="white" link={false} className="drop-shadow-md" />
         </div>
 
         <div className="flex items-center gap-3">
@@ -176,7 +194,7 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
         </div>
       </header>
 
-      {/* Navegação por setas laterais discretas (Desktop) */}
+      {/* Navegação por setas laterais (Desktop) */}
       <button
         onClick={prevSlide}
         disabled={current === 0}
@@ -205,13 +223,13 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
       {/* Conteúdo Central e Inferior do Slide */}
       <main className="relative z-20 mx-auto w-full max-w-4xl px-6 pb-8 sm:px-12 sm:pb-12">
         <div className="space-y-6">
-          {/* Tag de Contexto com ícone */}
+          {/* Tag de Contexto com ícone SVG limpo (sem emoji) */}
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-500/20 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-amber-300 backdrop-blur-md">
-            <span>{slide.tagIcon}</span>
+            <SlideIcon type={slide.tagIconType} />
             <span>{slide.tag}</span>
           </div>
 
-          {/* Título e Subtítulo com tipografia destacada */}
+          {/* Título e Subtítulo */}
           <div className="space-y-3">
             <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl drop-shadow-md">
               {slide.title}
@@ -234,9 +252,8 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
             ))}
           </div>
 
-          {/* Barra de Ações Inferior: Indicadores de Progresso + Botão de Ação */}
+          {/* Indicadores de Progresso + Botão de Ação */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-white/10">
-            {/* Indicadores de Progresso (Dots interativos) */}
             <div className="flex items-center gap-2.5">
               {SLIDES.map((_, idx) => {
                 const isDotActive = idx === current;
@@ -259,7 +276,6 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
               </span>
             </div>
 
-            {/* Botão de Ação: "Próximo" ou "Começar Agora" */}
             <div className="flex w-full sm:w-auto items-center gap-3">
               <button
                 onClick={nextSlide}
@@ -287,4 +303,3 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
     </div>
   );
 }
-

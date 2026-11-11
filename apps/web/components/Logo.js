@@ -1,41 +1,81 @@
 'use client';
 import Link from 'next/link';
 
-export const LOGO_SUPABASE_URL = 'https://xdnitkjjinejmnhtdbcf.supabase.co/storage/v1/object/public/marketplace/img_sistema/logo.png';
-export const LOGO_LOCAL_URL = '/logo.png';
+export const LOGO_LIGHT_URL = '/logo.png';
+export const LOGO_DARK_URL = '/logobranco.png';
+export const LOGO_LIGHT_FALLBACK =
+  'https://xdnitkjjinejmnhtdbcf.supabase.co/storage/v1/object/public/marketplace/img_sistema/logo.png';
+export const LOGO_DARK_FALLBACK =
+  'https://xdnitkjjinejmnhtdbcf.supabase.co/storage/v1/object/public/marketplace/img_sistema/logobranco.png';
 
-export default function Logo({ size = 'md', href = '/', showText = true, className = '', link = true }) {
+export default function Logo({
+  size = 'md',
+  href = '/',
+  variant = 'auto',
+  className = '',
+  link = true,
+}) {
   const sizeMap = {
-    sm: { img: 'h-7 w-7', text: 'text-lg', badge: 'text-[9px] px-1.5 py-0.2' },
-    md: { img: 'h-9 w-9', text: 'text-2xl', badge: 'text-[10px] px-2 py-0.5' },
-    lg: { img: 'h-12 w-12', text: 'text-3xl', badge: 'text-xs px-2.5 py-0.5' },
-    xl: { img: 'h-16 w-16', text: 'text-4xl', badge: 'text-xs px-3 py-1' },
+    sm: 'h-8 sm:h-9 w-auto',
+    md: 'h-10 sm:h-12 w-auto',
+    lg: 'h-14 sm:h-16 w-auto',
+    xl: 'h-20 sm:h-24 w-auto',
   };
 
   const currentSize = sizeMap[size] || sizeMap.md;
 
   const content = (
-    <div className={`inline-flex items-center gap-2.5 select-none ${className}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={LOGO_LOCAL_URL}
-        onError={(e) => {
-          if (e.currentTarget.src !== LOGO_SUPABASE_URL) {
-            e.currentTarget.src = LOGO_SUPABASE_URL;
-          }
-        }}
-        alt="UniShop Logotipo"
-        className={`${currentSize.img} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105`}
-      />
-      {showText && (
-        <div className="flex flex-col leading-none">
-          <span className={`brand-nautilus tracking-wide text-slate-900 dark:text-white ${currentSize.text} font-normal`}>
-            UniShop
-          </span>
-          <span className="-mt-1 text-[9px] font-semibold uppercase tracking-wider text-amber-500 dark:text-amber-400">
-            ISPTEC
-          </span>
-        </div>
+    <div className={`inline-flex items-center select-none ${className}`}>
+      {variant === 'white' ? (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={LOGO_DARK_URL}
+          onError={(e) => {
+            if (e.currentTarget.src !== LOGO_DARK_FALLBACK) {
+              e.currentTarget.src = LOGO_DARK_FALLBACK;
+            }
+          }}
+          alt="UniShop Campus Marketplace"
+          className={`${currentSize} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105`}
+        />
+      ) : variant === 'color' ? (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={LOGO_LIGHT_URL}
+          onError={(e) => {
+            if (e.currentTarget.src !== LOGO_LIGHT_FALLBACK) {
+              e.currentTarget.src = LOGO_LIGHT_FALLBACK;
+            }
+          }}
+          alt="UniShop Campus Marketplace"
+          className={`${currentSize} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105`}
+        />
+      ) : (
+        /* Modo Automático: Light usa logo.png e Dark usa logobranco.png */
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={LOGO_LIGHT_URL}
+            onError={(e) => {
+              if (e.currentTarget.src !== LOGO_LIGHT_FALLBACK) {
+                e.currentTarget.src = LOGO_LIGHT_FALLBACK;
+              }
+            }}
+            alt="UniShop Campus Marketplace"
+            className={`${currentSize} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105 block dark:hidden`}
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={LOGO_DARK_URL}
+            onError={(e) => {
+              if (e.currentTarget.src !== LOGO_DARK_FALLBACK) {
+                e.currentTarget.src = LOGO_DARK_FALLBACK;
+              }
+            }}
+            alt="UniShop Campus Marketplace"
+            className={`${currentSize} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105 hidden dark:block`}
+          />
+        </>
       )}
     </div>
   );
@@ -43,9 +83,8 @@ export default function Logo({ size = 'md', href = '/', showText = true, classNa
   if (!link) return content;
 
   return (
-    <Link href={href} className="group inline-flex items-center">
+    <Link href={href} className="group inline-flex items-center" aria-label="UniShop - Página inicial">
       {content}
     </Link>
   );
 }
-

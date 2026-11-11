@@ -33,19 +33,19 @@ export default function Login() {
 
   return (
     <div className="relative -mx-4 -mt-6 -mb-28 min-h-screen overflow-hidden sm:-mx-6 lg:-mx-8 flex items-center justify-center p-4 py-12 sm:py-16">
-      {/* Imagem de Fundo de Ambiente Universitário e Partilha */}
+      {/* Imagem de Fundo de Estudantes Negros no Campus Universitário */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/images/login-campus.jpg"
-        alt="Ambiente Universitário ISPTEC"
+        alt="Estudantes em Ambiente Acadêmico ISPTEC"
         className="absolute inset-0 h-full w-full object-cover object-center scale-105 transform animate-pulse duration-[10000ms]"
       />
 
-      {/* Overlays em camadas para profundidade, contraste e ar corporativo sofisticado */}
+      {/* Overlays em camadas para contraste e estética elegante */}
       <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/90 via-slate-900/80 to-amber-950/70" />
       <div className="absolute inset-0 bg-radial-gradient backdrop-blur-[2px]" />
 
-      {/* Botões do Topo (Voltar à vitrine e Alternador de Tema) */}
+      {/* Botões do Topo */}
       <div className="absolute top-5 left-5 right-5 flex items-center justify-between z-20 max-w-6xl mx-auto">
         <Link
           href="/"
@@ -63,25 +63,25 @@ export default function Login() {
       <div className="relative z-10 w-full max-w-md">
         <form
           onSubmit={submit}
-          className="glassform border-white/20 bg-white/80 dark:border-white/10 dark:bg-slate-950/75 shadow-2xl backdrop-blur-2xl transition-all duration-300 space-y-5"
+          className="glassform border-white/20 bg-white/85 dark:border-white/10 dark:bg-slate-950/80 shadow-2xl backdrop-blur-2xl transition-all duration-300 space-y-5"
         >
           {/* Cabeçalho do Card */}
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-3">
             <div className="inline-flex justify-center mb-1">
               <Logo size="lg" link={false} />
             </div>
 
-            {/* Selo de Ambiente Universitário & Partilha */}
+            {/* Selo de Ambiente Acadêmico sem emojis */}
             <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-ping" />
               Ambiente Acadêmico · Partilha & Oportunidades
             </div>
 
             <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Aceder ao UniShop
+              Aceder à Plataforma
             </h1>
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              O marketplace oficial do ISPTEC. Compre, venda e alugue materiais com total segurança no campus.
+              Compre, venda e alugue materiais com total segurança e confiança no campus do ISPTEC.
             </p>
           </div>
 
@@ -110,11 +110,9 @@ export default function Login() {
 
           {/* Campo Password */}
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <label className="label text-xs uppercase tracking-wider font-bold text-slate-700 dark:text-slate-300" htmlFor="p">
-                Palavra-passe
-              </label>
-            </div>
+            <label className="label text-xs uppercase tracking-wider font-bold text-slate-700 dark:text-slate-300" htmlFor="p">
+              Palavra-passe
+            </label>
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,7 +134,7 @@ export default function Login() {
 
           <Msg error={err} />
 
-          {/* Botão de Submissão */}
+          {/* Botão Entrar */}
           <button
             type="submit"
             className="w-full rounded-xl bg-gradient-to-r from-amber-500 via-amber-500 to-amber-600 px-4 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-amber-500/25 transition duration-200 hover:-translate-y-0.5 hover:shadow-amber-500/40 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
@@ -155,7 +153,7 @@ export default function Login() {
             )}
           </button>
 
-          {/* Rodapé do Glassform */}
+          {/* Rodapé do Card */}
           <div className="pt-2 text-center space-y-3">
             <p className="text-xs text-slate-600 dark:text-slate-400">
               Ainda não tem conta no campus?{' '}
@@ -164,13 +162,19 @@ export default function Login() {
               </Link>
             </p>
 
-            <div className="flex items-center justify-center gap-4 text-[11px] text-slate-500 dark:text-slate-500 pt-2 border-t border-slate-200/60 dark:border-slate-800/60">
-              <span className="inline-flex items-center gap-1">
-                🔒 Autenticação Segura
+            <div className="flex items-center justify-center gap-3 text-[11px] text-slate-500 dark:text-slate-500 pt-2 border-t border-slate-200/60 dark:border-slate-800/60">
+              <span className="inline-flex items-center gap-1.5">
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                Autenticação Segura
               </span>
               <span>•</span>
-              <span className="inline-flex items-center gap-1">
-                🎓 Exclusivo ISPTEC
+              <span className="inline-flex items-center gap-1.5">
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                Exclusivo ISPTEC
               </span>
             </div>
           </div>

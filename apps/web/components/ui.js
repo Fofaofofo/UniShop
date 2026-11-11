@@ -70,7 +70,11 @@ export function Modal({ title, onClose, children }) {
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">{title}</h2>
-          <button onClick={onClose} className="btn-ghost !px-2.5 !py-1 text-xs" aria-label="Fechar">✕</button>
+          <button onClick={onClose} className="btn-ghost !p-1.5 rounded-xl" aria-label="Fechar">
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
         {children}
       </div>
