@@ -28,7 +28,7 @@ async function main() {
   await prisma.user.upsert({
     where: { matricula },
     create: {
-      nomeCompleto: 'Administrador ISPTEC', matricula, telefone: process.env.ADMIN_TELEFONE || '244900000000',
+      nomeCompleto: 'Administrador UniShop', matricula, telefone: process.env.ADMIN_TELEFONE || '244900000000',
       passwordHash: await bcrypt.hash(process.env.ADMIN_PASSWORD || 'Admin@12345', 10),
       role: 'ADMIN', telefoneVerificado: true, anoAcademico: 1,
       cursoId: curso.id, blocoId: sala.blocoId, salaId: sala.id,

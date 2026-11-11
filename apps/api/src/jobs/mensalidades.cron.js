@@ -38,7 +38,7 @@ export async function runMensalidades() {
   });
   for (const p of aviso) {
     await notificar(p, 'MENSALIDADE_3_DIAS',
-      `Olá, ${p.vendedor.nomeCompleto}! A mensalidade do seu produto '${p.titulo}' expira em ${dias} dias (${fmtDate(p.mensalidadeExpiraEm)}). Renove para evitar a desativação automática na vitrine do ISPTEC Marketplace.`);
+      `Olá, ${p.vendedor.nomeCompleto}! A mensalidade do seu produto '${p.titulo}' expira em ${dias} dias (${fmtDate(p.mensalidadeExpiraEm)}). Renove para evitar a desativação automática na vitrine da UniShop.`);
   }
 
   // 3) Alugueres em atraso

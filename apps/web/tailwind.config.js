@@ -4,8 +4,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        ink: '#0E2A2B', lagoon: { DEFAULT: '#0F5257', dark: '#0A3B3F', soft: '#E3EFEE' },
-        sol: { DEFAULT: '#F4B323', dark: '#D99A0B' }, paper: '#F5F7F6', line: '#D5DFDD',
+        ink: '#1E293B',
+        lagoon: { DEFAULT: '#FF7A00', dark: '#EA580C', soft: '#FFF1E6' },
+        sol: { DEFAULT: '#F59E0B', dark: '#D97706' },
+        coral: '#FF8C69',
+        paper: '#F8FAFC',
+        line: '#E2E8F0',
       },
       fontFamily: { display: ['var(--font-display)', 'sans-serif'], sans: ['var(--font-body)', 'system-ui', 'sans-serif'] },
     },

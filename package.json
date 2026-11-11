@@ -1,5 +1,5 @@
 {
-  "name": "isptec-marketplace",
+  "name": "unishop",
   "private": true,
   "workspaces": ["apps/*"],
   "scripts": {

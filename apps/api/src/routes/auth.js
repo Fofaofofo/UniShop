@@ -19,7 +19,7 @@ async function enviarOtp(user) {
   await prisma.otpCode.create({
     data: { userId: user.id, codigoHash: sha256(user.id + code), expiraEm: new Date(Date.now() + 5 * 60_000) },
   });
-  await sendWhatsApp(user.telefone, `ISPTEC Marketplace: O seu código de verificação é ${code}. Introduza este código para ativar a sua conta.`);
+  await sendWhatsApp(user.telefone, `UniShop: O seu código de verificação é ${code}. Introduza este código para ativar a sua conta.`);
 }
 
 const registoSchema = z.object({
