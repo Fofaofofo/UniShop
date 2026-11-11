@@ -13,13 +13,15 @@ export default function Logo({
   href = '/',
   variant = 'auto',
   className = '',
+  imgClassName = '',
   link = true,
 }) {
+  // Tamanhos ampliados para garantir visibilidade e legibilidade total da tipografia e do subtítulo
   const sizeMap = {
-    sm: 'h-8 sm:h-9 w-auto',
-    md: 'h-10 sm:h-12 w-auto',
-    lg: 'h-14 sm:h-16 w-auto',
-    xl: 'h-20 sm:h-24 w-auto',
+    sm: 'h-10 sm:h-12 w-auto max-h-12',
+    md: 'h-14 sm:h-16 md:h-20 w-auto max-h-20',
+    lg: 'h-24 sm:h-28 md:h-32 w-auto max-h-32',
+    xl: 'h-32 sm:h-40 md:h-44 w-auto max-h-44',
   };
 
   const currentSize = sizeMap[size] || sizeMap.md;
@@ -36,7 +38,7 @@ export default function Logo({
             }
           }}
           alt="UniShop Campus Marketplace"
-          className={`${currentSize} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105`}
+          className={`${currentSize} ${imgClassName} object-contain drop-shadow-md transition-transform duration-200 group-hover:scale-105`}
         />
       ) : variant === 'color' ? (
         /* eslint-disable-next-line @next/next/no-img-element */
@@ -48,7 +50,7 @@ export default function Logo({
             }
           }}
           alt="UniShop Campus Marketplace"
-          className={`${currentSize} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105`}
+          className={`${currentSize} ${imgClassName} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105`}
         />
       ) : (
         /* Modo Automático: Light usa logo.png e Dark usa logobranco.png */
@@ -62,7 +64,7 @@ export default function Logo({
               }
             }}
             alt="UniShop Campus Marketplace"
-            className={`${currentSize} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105 block dark:hidden`}
+            className={`${currentSize} ${imgClassName} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105 block dark:hidden`}
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -73,7 +75,7 @@ export default function Logo({
               }
             }}
             alt="UniShop Campus Marketplace"
-            className={`${currentSize} object-contain drop-shadow-sm transition-transform duration-200 group-hover:scale-105 hidden dark:block`}
+            className={`${currentSize} ${imgClassName} object-contain drop-shadow-md transition-transform duration-200 group-hover:scale-105 hidden dark:block`}
           />
         </>
       )}
