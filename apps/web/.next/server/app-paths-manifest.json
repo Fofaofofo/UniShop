@@ -1,0 +1,20 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/meus-pedidos/page": "app/meus-pedidos/page.js",
+  "/produtos/[id]/page": "app/produtos/[id]/page.js",
+  "/registo/page": "app/registo/page.js",
+  "/admin/institucional/page": "app/admin/institucional/page.js",
+  "/admin/produtos/page": "app/admin/produtos/page.js",
+  "/admin/pagamentos/page": "app/admin/pagamentos/page.js",
+  "/vendedor/page": "app/vendedor/page.js",
+  "/vendedor/financeiro/page": "app/vendedor/financeiro/page.js",
+  "/vendedor/produtos/[id]/page": "app/vendedor/produtos/[id]/page.js",
+  "/admin/moderacao/page": "app/admin/moderacao/page.js",
+  "/vendedor/produtos/page": "app/vendedor/produtos/page.js",
+  "/vendedor/pedidos/page": "app/vendedor/pedidos/page.js",
+  "/admin/utilizadores/page": "app/admin/utilizadores/page.js",
+  "/vendedor/produtos/novo/page": "app/vendedor/produtos/novo/page.js",
+  "/admin/page": "app/admin/page.js"
+}
