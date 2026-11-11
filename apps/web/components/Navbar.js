@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth';
+import Logo from '@/components/Logo';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const Icon = ({ name, active = false }) => {
   const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' };
@@ -23,6 +25,9 @@ export default function Navbar() {
   const pedidos = user ? '/meus-pedidos' : '/login';
   const conta = user ? painel : '/login';
 
+  // Se estiver na landing screen em tela cheia na rota /landing, podemos ocultar o header ou deixá-lo discreto
+  const isLandingRoute = pathname === '/landing';
+
   useEffect(() => {
     if (pathname === '/') setActiveTab('inicio');
     else if (pathname === '/meus-pedidos') setActiveTab('pedidos');
@@ -36,41 +41,107 @@ export default function Navbar() {
     { id: 'conta', label: 'Conta', href: conta, icon: 'account', active: (user && pathname.startsWith(painel) && (pathname !== '/meus-pedidos' || activeTab === 'conta')) || (!user && pathname === '/login' && activeTab === 'conta') },
   ];
 
+  if (isLandingRoute) return null;
+
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-white/70 bg-white/80 shadow-sm shadow-slate-900/[0.03] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2.5 font-display text-xl font-extrabold tracking-tight text-ink">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-400 text-white shadow-sm shadow-orange-500/20" aria-hidden="true">
-              <span className="text-lg">U</span>
-            </span>
-            Uni<span className="text-lagoon">Shop</span>
-          </Link>
-          <nav className="hidden items-center gap-1 text-sm md:flex" aria-label="Principal">
-            <Link href="/#catalogo" className="rounded-xl px-3 py-2 font-medium text-slate-600 transition hover:bg-orange-50 hover:text-lagoon">Explorar</Link>
-            {!loading && !user && <>
-              <Link href="/login" className="rounded-xl px-3 py-2 font-semibold text-slate-600 transition hover:bg-slate-50">Entrar</Link>
-              <Link href="/registo" className="btn-primary ml-1">Criar conta</Link>
-            </>}
-            {user && <>
-              <Link href="/meus-pedidos" className="rounded-xl px-3 py-2 font-medium text-slate-600 transition hover:bg-orange-50">Meus pedidos</Link>
-              <Link href={painel} className="btn-primary ml-1">{user.role === 'COMPRADOR' ? 'Minha conta' : 'Painel'}</Link>
-              <button onClick={logout} className="rounded-xl px-3 py-2 font-medium text-slate-600 transition hover:bg-slate-50">Sair</button>
-            </>}
+      <header className="sticky top-0 z-40 border-b border-white/70 bg-white/80 shadow-sm shadow-slate-900/[0.03] backdrop-blur-xl transition-colors dark:border-slate-800/80 dark:bg-slate-950/80">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+          <Logo size="md" />
+
+          <nav className="hidden items-center gap-1.5 text-sm md:flex" aria-label="Principal">
+            <Link
+              href="/#catalogo"
+              className="rounded-xl px-3 py-2 font-medium text-slate-600 transition hover:bg-orange-50 hover:text-lagoon dark:text-slate-300 dark:hover:bg-slate-800/80 dark:hover:text-amber-400"
+            >
+              Explorar
+            </Link>
+
+            <Link
+              href="/landing"
+              className="rounded-xl px-3 py-2 font-medium text-slate-500 transition hover:bg-amber-50 hover:text-amber-600 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-amber-400"
+              title="Apresentação da plataforma"
+            >
+              Conhecer UniShop
+            </Link>
+
+            {!loading && !user && (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-xl px-3 py-2 font-semibold text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  Entrar
+                </Link>
+                <Link href="/registo" className="btn-primary ml-1">
+                  Criar conta
+                </Link>
+              </>
+            )}
+
+            {user && (
+              <>
+                <Link
+                  href="/meus-pedidos"
+                  className="rounded-xl px-3 py-2 font-medium text-slate-600 transition hover:bg-orange-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  Meus pedidos
+                </Link>
+                <Link href={painel} className="btn-primary ml-1">
+                  {user.role === 'COMPRADOR' ? 'Minha conta' : 'Painel'}
+                </Link>
+                <button
+                  onClick={logout}
+                  className="rounded-xl px-3 py-2 font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  Sair
+                </button>
+              </>
+            )}
+
+            <div className="ml-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+              <ThemeToggle />
+            </div>
           </nav>
-          {!loading && !user && <Link href="/login" className="btn-primary px-3 md:hidden">Entrar</Link>}
-          {user && <Link href={painel} className="btn-primary px-3 md:hidden">{user.role === 'COMPRADOR' ? 'Conta' : 'Painel'}</Link>}
+
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            {!loading && !user && (
+              <Link href="/login" className="btn-primary !px-3 !py-1.5 text-xs">
+                Entrar
+              </Link>
+            )}
+            {user && (
+              <Link href={painel} className="btn-primary !px-3 !py-1.5 text-xs">
+                {user.role === 'COMPRADOR' ? 'Conta' : 'Painel'}
+              </Link>
+            )}
+          </div>
         </div>
       </header>
-      <nav className="glass fixed inset-x-3 bottom-3 z-50 grid grid-cols-4 rounded-2xl p-1.5 md:hidden" aria-label="Navegação móvel">
+
+      {/* Navegação móvel no rodapé */}
+      <nav
+        className="glass fixed inset-x-3 bottom-3 z-50 grid grid-cols-4 rounded-2xl p-1.5 md:hidden"
+        aria-label="Navegação móvel"
+      >
         {tabs.map((tab) => (
-          <Link key={tab.id} href={tab.href}
+          <Link
+            key={tab.id}
+            href={tab.href}
             onClick={() => setActiveTab(tab.id)}
             aria-current={tab.active ? 'page' : undefined}
-            className={`relative flex min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[11px] font-semibold transition-all duration-200 ${tab.active ? 'bg-orange-50 text-lagoon' : 'text-slate-500 hover:bg-white/70 hover:text-ink'}`}>
+            className={`relative flex min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[11px] font-semibold transition-all duration-200 ${
+              tab.active
+                ? 'bg-amber-500/10 text-amber-500 dark:bg-amber-400/15 dark:text-amber-400'
+                : 'text-slate-500 hover:bg-white/70 hover:text-ink dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-white'
+            }`}
+          >
             <Icon name={tab.icon} active={tab.active} />
             <span className="truncate">{tab.label}</span>
-            {tab.active && <span className="absolute bottom-1 h-0.5 w-5 rounded-full bg-lagoon" />}
+            {tab.active && (
+              <span className="absolute bottom-1 h-0.5 w-5 rounded-full bg-amber-500 dark:bg-amber-400" />
+            )}
           </Link>
         ))}
       </nav>

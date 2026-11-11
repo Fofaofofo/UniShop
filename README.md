@@ -1,4 +1,3 @@
-
 # UniShop
 
 Monorepo: `apps/api` (Node + Express + Prisma + PostgreSQL) e `apps/web` (Next.js App Router + Tailwind).
