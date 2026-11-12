@@ -161,10 +161,9 @@ export default function LandingOnboarding({ onFinish, isStandalone = false }) {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={s.image} alt={s.title} className="h-full w-full object-cover object-center" />
-            {/* Overlays elegantes */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/75 to-black/35" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/60" />
-            <div className="absolute inset-0 bg-radial-gradient from-amber-500/10 via-transparent to-black/70 mix-blend-screen" />
+            {/* Overlay refinado: iluminação nítida dos estudantes universitários e contraste perfeito para o texto */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/15" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/20" />
           </div>
         );
       })}

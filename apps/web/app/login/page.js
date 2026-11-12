@@ -33,37 +33,36 @@ export default function Login() {
 
   return (
     <div className="relative -mx-4 -mt-6 -mb-28 min-h-screen overflow-hidden sm:-mx-6 lg:-mx-8 flex items-center justify-center p-4 py-12 sm:py-16">
-      {/* Imagem de Fundo de Estudantes Negros no Campus Universitário */}
+      {/* Imagem de Fundo de Estudantes Universitários Negros no Campus */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/images/login-campus.jpg"
         alt="Estudantes em Ambiente Acadêmico ISPTEC"
-        className="absolute inset-0 h-full w-full object-cover object-center scale-105 transform animate-pulse duration-[10000ms]"
+        className="absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      {/* Overlays em camadas para contraste e estética elegante */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/90 via-slate-900/80 to-amber-950/70" />
-      <div className="absolute inset-0 bg-radial-gradient backdrop-blur-[2px]" />
+      {/* Overlay translúcido equilibrado: permite ver com total nitidez os estudantes ao fundo */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/50 to-black/40" />
 
       {/* Botões do Topo */}
       <div className="absolute top-5 left-5 right-5 flex items-center justify-between z-20 max-w-6xl mx-auto">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 rounded-xl bg-black/40 px-3.5 py-2 text-xs font-semibold text-white/90 backdrop-blur-md transition hover:bg-black/60 hover:text-amber-400 border border-white/10"
+          className="inline-flex items-center gap-2 rounded-xl bg-black/50 px-3.5 py-2 text-xs font-semibold text-white/90 backdrop-blur-md transition hover:bg-black/70 hover:text-amber-400 border border-white/15"
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
           Vitrine UniShop
         </Link>
-        <ThemeToggle className="bg-black/40 border-white/10 text-white hover:bg-black/60 hover:text-amber-400" />
+        <ThemeToggle className="bg-black/50 border-white/15 text-white hover:bg-black/70 hover:text-amber-400" />
       </div>
 
       {/* Glassform Central */}
       <div className="relative z-10 w-full max-w-md">
         <form
           onSubmit={submit}
-          className="glassform border-white/20 bg-white/85 dark:border-white/10 dark:bg-slate-950/80 shadow-2xl backdrop-blur-2xl transition-all duration-300 space-y-5"
+          className="glassform border-white/30 bg-white/90 dark:border-white/10 dark:bg-slate-950/85 shadow-2xl backdrop-blur-2xl transition-all duration-300 space-y-5"
         >
           {/* Cabeçalho do Card */}
           <div className="text-center space-y-3">
